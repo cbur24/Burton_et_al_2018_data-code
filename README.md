@@ -4,6 +4,7 @@ Relevant data, results, and code for Phil Trans B paper submission: Burton et al
 Re-analysis datasets are not included in this repo. All the climate data used in this analysis is freely available
 from the following websites:
 
+Reanalysis and rainfall datasets:
 ERA-Interim:  http://apps.ecmwf.int/datasets/data/interim-full-daily/levtype=sfc/
 
 CFSR/CFS-R: http://cfs.ncep.noaa.gov/
@@ -21,6 +22,7 @@ PERSIANN-CDR: http://chrsdata.eng.uci.edu/
 CMAP: https://www.esrl.noaa.gov/psd/data/gridded/data.cmap.html
 
 
+Weather Station data:
 GHCN monthly: https://gis.ncdc.noaa.gov/maps/ncei/cdo/monthly
 
 CRUTEM4: https://crudata.uea.ac.uk/cru/data/temperature)
