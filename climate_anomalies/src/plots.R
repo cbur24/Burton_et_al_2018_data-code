@@ -91,7 +91,7 @@ forest_mask_025 = raster(a, varname = "tropical_forest_mask")
 
 #--------raster manipulation--------------------------------------------------------------
 
-#remap all plots to the 0.5 CRU grid and combine plots into a stack (cfsr is already at 0.5grid)
+#remap all plots to the 0.5 grid and combine plots into a stack (cfsr is already at 0.5grid)
   #temp  
   erai_max = resample(erai_max, cru_max, method = "bilinear")
   merra2_max = resample(merra2_max, cru_max, method = "bilinear")
@@ -118,7 +118,7 @@ forest_mask_025 = raster(a, varname = "tropical_forest_mask")
   extent_tropics <- as(raster::extent(-105.0, 180.0, 21.0, -21.0), "SpatialPolygons")
   proj4string(extent_tropics) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
 
-  #crop to tropics extent (should try to do this with lapply or calc)
+  #crop to tropics extent (should be doing this with lapply or calc)
   erai_max_tropics =crop(erai_max, extent_tropics)
   erai_mean_tropics =crop(erai_mean, extent_tropics)
   merra2_max_tropics =crop(merra2_max, extent_tropics)
@@ -282,85 +282,6 @@ levelplot(difference_p_mean, col.regions = colorRampPalette(rev(brewer.pal(11, '
   #print(p4, split=c(1, 4, 1, 4))
   
 
-#----------CWD plots (with locations of sites going into NEE model [for yadvinder's talk])------------
-
-#import ites .csv
-model_sites <- read_csv("data/model_sites.csv")
-future_model_sites = read_csv("data/future_model_sites.csv")
-
-projection = crs(erai_max)
-
-# .csv to R SpatialPointsDataFrame
-model_sites <- SpatialPointsDataFrame(model_sites[,3:2],
-                                    model_sites,           
-                                    proj4string = projection, match.ID =F) 
-future_model_sites <- SpatialPointsDataFrame(future_model_sites[,3:2],
-                                    future_model_sites,           
-                                    proj4string = projection, match.ID =F) 
-
-
-levelplot(chirps_CWD_max_tropics, col.regions = rev(brewer.pal(8, 'YlOrRd')), margin=F,
-          at=c(-Inf, seq(-250, 0, 50), Inf), 
-          colorkey=list(at=seq(-300, 0, 50), sub = "CHIRPS Maximum CWD Anomaly Jan. 2015 - May 2016",
-          labels=c('< -300', seq(-250, 0, 50))), ylab = "", xlab="",
-          pretty=TRUE, par.settings=list(panel.background=list(col="slategray3"))) +
-          layer_(sp.polygons(continents, col = "grey33", fill="gray70", lwd = 0.7)) +
-          layer(sp.points(model_sites, pch=21, col="black", fill="limegreen", cex=0.5)) +
-          layer(sp.points(future_model_sites, pch=21, col="black", fill = "royalblue", cex=0.5))
-
-
-levelplot(chirps_CWD_mean_tropics, col.regions = colorRampPalette(brewer.pal(10, 'BrBG')), margin=F,
-          at=c(-Inf, seq(-250, 250, 50), Inf), 
-          colorkey=list(at=seq(-300, 300, 50), sub = "CHIRPS Mean CWD Anomaly Jan. 2015 - May 2016",
-          labels=c('< -300', seq(-250, 250, 50), '>300')), ylab = "", xlab="",
-          pretty=TRUE, par.settings=list(panel.background=list(col="slategray3"))) +
-          layer_(sp.polygons(continents, col = "grey33", fill="gray70", lwd = 0.7)) +
-          layer(sp.points(model_sites, pch=21, col="black", fill="limegreen", cex=0.5)) +
-          layer(sp.points(future_model_sites, pch=21, col="black", fill = "royalblue", cex=0.5))
-
-#zoom in on each continent
-#creating bounding boxes
-#SE Asia
-extent_SEA <- as(raster::extent(103.0, 125.0, -6.0, 9.5), "SpatialPolygons")
-proj4string(extent_SEA) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
-#Africa
-extent_A <- as(raster::extent(-25.0, 60.0, -21.0, 15.0), "SpatialPolygons")
-proj4string(extent_A) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
-#sthAmerica
-extent_SA <- as(raster::extent(-120.0, -28.0, -21.0, 21.0), "SpatialPolygons")
-proj4string(extent_SA) <- "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0"
-
-chirps_CWD_max_SEA = crop(chirps_CWD_max_tropics, extent_SEA)
-chirps_CWD_max_A = crop(chirps_CWD_max_tropics, extent_A)
-chirps_CWD_max_SA = crop(chirps_CWD_max_tropics, extent_SA)
-
-levelplot(chirps_CWD_max_SEA, col.regions = rev(brewer.pal(8, 'YlOrRd')), margin=F,
-          at=c(-Inf, seq(-250, 0, 50), Inf), 
-          colorkey=list(at=seq(-300, 0, 50), sub = "CHIRPS Maximum CWD Anomaly Jan. 2015 - May 2016",
-          labels=c('< -300', seq(-250, 0, 50))), ylab = "", xlab="",
-          pretty=TRUE, par.settings=list(panel.background=list(col="slategray3"))) +
-          layer_(sp.polygons(continents, col = "grey33", fill="gray70", lwd = 0.7)) +
-          layer(sp.points(model_sites, pch=21, col="black", fill="limegreen", cex=1.25)) +
-          layer(sp.points(future_model_sites, pch=21, col="black", fill = "royalblue", cex=1.25))
-
-levelplot(chirps_CWD_max_A, col.regions = rev(brewer.pal(8, 'YlOrRd')), margin=F,
-          at=c(-Inf, seq(-250, 0, 50), Inf), 
-          colorkey=list(at=seq(-300, 0, 50), sub = "CHIRPS Maximum CWD Anomaly Jan. 2015 - May 2016",
-          labels=c('< -300', seq(-250, 0, 50))), ylab = "", xlab="",
-          pretty=TRUE, par.settings=list(panel.background=list(col="slategray3"))) +
-          layer_(sp.polygons(continents, col = "grey33", fill="gray70", lwd = 0.7)) +
-          layer(sp.points(model_sites, pch=21, col="black", fill="limegreen", cex=1.25)) +
-          layer(sp.points(future_model_sites, pch=21, col="black", fill = "royalblue", cex=1.25))
-
-levelplot(chirps_CWD_max_SA, col.regions = rev(brewer.pal(8, 'YlOrRd')), margin=F,
-          at=c(-Inf, seq(-250, 0, 50), Inf), 
-          colorkey=list(at=seq(-300, 0, 50), sub = "CHIRPS Maximum CWD Anomaly Jan. 2015 - May 2016",
-          labels=c('< -300', seq(-250, 0, 50))), ylab = "", xlab="",
-          pretty=TRUE, par.settings=list(panel.background=list(col="slategray3"))) +
-          layer_(sp.polygons(continents, col = "grey33", fill="gray70", lwd = 0.7)) +
-          layer(sp.points(model_sites, pch=21, col="black", fill="limegreen", cex=1.5)) +
-          layer(sp.points(future_model_sites, pch=21, col="black", fill = "royalblue", cex=1.5))
-
 
 #-----plot of stations used in the station analysis---------------------------------------------------------
 temp_sites <- read_csv("data/extraction_sites_temp.csv")
@@ -380,19 +301,6 @@ levelplot(forest_mask_plotting, col.regions = "forestgreen",
   
 
 
-levelplot(chirps_CWD_max_tropics)
-
-
-#-----------------------------------------------------------------------------------------------------------=
-#fixing 'fraction of forest' mask to remove the zero values (they make the maps for yadvinder look shit)
-a = "data/FoF_GFC250m_remapped.nc"
-FoF = raster(a, varname = "fraction_of_forest")
-
-FoF_reclassify = reclassify(FoF, cbind(0, NA))
-
-writeRaster(FoF_reclassify, filename="FoF_final", format="CDF", 
-            varname = "FoF", varunit = "fraction", longname = "fraction_of_forest",
-            overwrite=TRUE)
 
 
 
