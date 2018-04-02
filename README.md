@@ -1,7 +1,7 @@
 # Burton_et_al_2018_data-code
 Relevant data, results, and code for Phil Trans B paper submission: Burton et al. (2018)
 
-Re-analysis datasets are not included in this repo. All the climate data used in this analysis is freely available
+Re-analysis datasets are not included in this repo.  The climate data used in this analysis is freely available
 from the following websites:
 
 Reanalysis and rainfall datasets:
